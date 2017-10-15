@@ -17,10 +17,10 @@ while True:
                     dummy, lim_out, lim_in, traf_out, traf_in = line.split()
                     if dummy == 'traf:':
                         break
-        if not lve_id in oldstats:
-            oldstats[lve_id] = { 'in': 0, 'out': 0 }
-        newstats[lve_id] = { 'in': traf_in - oldstats[lve_id]['in'], 'out': traf_out - oldstats[lve_id]['out'] }
-        oldstats[lve_id] = { 'in': traf_in, 'out': traf_out }
+            if not lve_id in oldstats:
+                oldstats[lve_id] = { 'in': 0, 'out': 0 }
+            newstats[lve_id] = { 'in': traf_in - oldstats[lve_id]['in'], 'out': traf_out - oldstats[lve_id]['out'] }
+            oldstats[lve_id] = { 'in': traf_in, 'out': traf_out }
     for lve_id in oldstats:
         if not lve_id in newstats:
             del oldstats[lve_id]
