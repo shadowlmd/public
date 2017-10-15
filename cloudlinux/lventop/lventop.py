@@ -12,8 +12,8 @@ def size_fmt(num):
     for unit in ['KiB', 'MiB']:
         num /= 1024.0
         if abs(num) < 1024.0:
-            return "%4.2f %s/s" % (num, unit)
-    return "%4.2f %s/s" % (num, 'GiB')
+            return "%.2f %s/s" % (num, unit)
+    return "%.2f %s/s" % (num, 'GiB')
 
 while True:
     sys.stderr.write("\x1b[2J\x1b[H")
@@ -36,5 +36,5 @@ while True:
         if not lve_id in newstats:
             del oldstats[lve_id]
     for lve_id in newstats:
-        print('%9s' % lve_id + size_fmt(newstats[lve_id]['in']) + size_fmt(newstats[lve_id]['out']));
+        print('%9s' % lve_id + '%12s' % size_fmt(newstats[lve_id]['in']) + '%12s' % size_fmt(newstats[lve_id]['out']));
     time.sleep(1)
