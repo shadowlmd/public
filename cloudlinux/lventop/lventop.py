@@ -9,15 +9,15 @@ oldstats = {}
 newstats = {}
 
 def size_fmt(num):
-    for unit in ['B','KiB','MiB']:
-        if abs(num) < 1024.0:
-            return "%6.2f %s/s" % (num, unit)
+    for unit in ['KiB', 'MiB']:
         num /= 1024.0
-    return "%6.2f %s/s" % (num, 'GiB')
+        if abs(num) < 1024.0:
+            return "%4.2f %s/s" % (num, unit)
+    return "%4.2f %s/s" % (num, 'GiB')
 
 while True:
     sys.stderr.write("\x1b[2J\x1b[H")
-    print('   LVE ID\t             IN\t            OUT')
+    print('   LVE ID          IN         OUT')
     for lve_id in os.listdir('/proc/lve/per-lve/'):
         fname = os.path.join('/proc/lve/per-lve', lve_id, 'net_stat')
         if lve_id.isdigit() and int(lve_id) >= min_lve and os.path.isfile(fname):
@@ -36,5 +36,5 @@ while True:
         if not lve_id in newstats:
             del oldstats[lve_id]
     for lve_id in newstats:
-        print('%9s' % lve_id + '\t' + size_fmt(newstats[lve_id]['in']) + '\t' + size_fmt(newstats[lve_id]['out']));
+        print('%9s' % lve_id + size_fmt(newstats[lve_id]['in']) + size_fmt(newstats[lve_id]['out']));
     time.sleep(1)
