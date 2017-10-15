@@ -17,7 +17,7 @@ def size_fmt(num):
 
 while True:
     sys.stderr.write("\x1b[2J\x1b[H")
-    print('   LVE ID          IN         OUT')
+    print('   LVE ID             IN            OUT')
     for lve_id in os.listdir('/proc/lve/per-lve/'):
         fname = os.path.join('/proc/lve/per-lve', lve_id, 'net_stat')
         if lve_id.isdigit() and int(lve_id) >= min_lve and os.path.isfile(fname):
@@ -36,5 +36,5 @@ while True:
         if not lve_id in newstats:
             del oldstats[lve_id]
     for lve_id in newstats:
-        print('%9s' % lve_id + '%12s' % size_fmt(newstats[lve_id]['in']) + '%12s' % size_fmt(newstats[lve_id]['out']));
+        print('%9s' % lve_id + '%15s' % size_fmt(newstats[lve_id]['in']) + '%15s' % size_fmt(newstats[lve_id]['out']));
     time.sleep(1)
