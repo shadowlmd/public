@@ -5,7 +5,7 @@ from operator import itemgetter
 import sys, os, time
 
 min_lve = 500
-sort_by = 2
+sort_by = 'out'
 oldstats = {}
 newstats = {}
 
@@ -37,7 +37,7 @@ while True:
         if not lve_id in newstats:
             del oldstats[lve_id]
     lines = 0
-    for lve_id in sorted(newstats, key = itemgetter(sort_by), reverse = True):
+    for lve_id in sorted(newstats, key = lambda index: newstats[index][sort_by], reverse = True):
         lines += 1
         print('%9s' % (lve_id) + '%15s' % (size_fmt(newstats[lve_id]['in'])) + '%15s' % (size_fmt(newstats[lve_id]['out'])));
         if lines == 10:
