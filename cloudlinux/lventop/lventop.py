@@ -11,9 +11,9 @@ newstats = {}
 def size_fmt(num):
     for unit in ['B','KiB','MiB']:
         if abs(num) < 1024.0:
-            return "%.2f %s" % (num, unit)
+            return "%.2f%s/s" % (num, unit)
         num /= 1024.0
-    return "%.2f %s" % (num, 'GiB')
+    return "%.2f%s/s" % (num, 'GiB')
 
 while True:
     sys.stderr.write("\x1b[2J\x1b[H")
