@@ -1,13 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
-from operator import itemgetter
-import sys, os, time
-
-min_lve = 500
-sort_by = 'out'
-oldstats = {}
-newstats = {}
+import sys, os, time, curses
 
 def size_fmt(num):
     for unit in ['KiB', 'MiB']:
@@ -16,30 +10,43 @@ def size_fmt(num):
             return "%.2f %s/s" % (num, unit)
     return "%.2f %s/s" % (num, 'GiB')
 
-while True:
-    sys.stderr.write("\x1b[2J\x1b[H")
-    print('   LVE ID             IN            OUT')
-    for lve_id in os.listdir('/proc/lve/per-lve/'):
-        fname = os.path.join('/proc/lve/per-lve', lve_id, 'net_stat')
-        if lve_id.isdigit() and int(lve_id) >= min_lve and os.path.isfile(fname):
-            with open(fname, 'r') as in_file:
-                for line in in_file:
-                    dummy, lim_out, lim_in, traf_out, traf_in = line.split()
-                    if dummy == 'traf:':
-                        break
-            traf_in = int(traf_in)
-            traf_out = int(traf_out)
-            if not lve_id in oldstats:
-                oldstats[lve_id] = { 'in': 0, 'out': 0 }
-            newstats[lve_id] = { 'in': traf_in - oldstats[lve_id]['in'], 'out': traf_out - oldstats[lve_id]['out'] }
-            oldstats[lve_id] = { 'in': traf_in, 'out': traf_out }
-    for lve_id in oldstats:
-        if not lve_id in newstats:
-            del oldstats[lve_id]
-    lines = 0
-    for lve_id in sorted(newstats, key = lambda index: newstats[index][sort_by], reverse = True):
-        lines += 1
-        print('%9s' % (lve_id) + '%15s' % (size_fmt(newstats[lve_id]['in'])) + '%15s' % (size_fmt(newstats[lve_id]['out'])));
-        if lines == 10:
-            break
-    time.sleep(1)
+def main(stdscr):
+    stdscr.nodelay(1)
+
+    min_lve = 500
+    sort_by = 'out'
+    oldstats = {}
+    newstats = {}
+
+    while True:
+        stdscr.clear()
+        #sys.stderr.write("\x1b[2J\x1b[H")
+        stdscr.addstr('   LVE ID             IN            OUT')
+        for lve_id in os.listdir('/proc/lve/per-lve/'):
+            fname = os.path.join('/proc/lve/per-lve', lve_id, 'net_stat')
+            if lve_id.isdigit() and int(lve_id) >= min_lve and os.path.isfile(fname):
+                with open(fname, 'r') as in_file:
+                    for line in in_file:
+                        dummy, lim_out, lim_in, traf_out, traf_in = line.split()
+                        if dummy == 'traf:':
+                            break
+                traf_in = int(traf_in)
+                traf_out = int(traf_out)
+                if not lve_id in oldstats:
+                    oldstats[lve_id] = { 'in': 0, 'out': 0 }
+                newstats[lve_id] = { 'in': traf_in - oldstats[lve_id]['in'], 'out': traf_out - oldstats[lve_id]['out'] }
+                oldstats[lve_id] = { 'in': traf_in, 'out': traf_out }
+        for lve_id in oldstats:
+            if not lve_id in newstats:
+                del oldstats[lve_id]
+        lines = 0
+        for lve_id in sorted(newstats, key = lambda item: newstats[item][sort_by], reverse = True):
+            lines += 1
+            stdscr.addstr('%9s' % (lve_id) + '%15s' % (size_fmt(newstats[lve_id]['in'])) + '%15s' % (size_fmt(newstats[lve_id]['out'])));
+            if lines == 10:
+                break
+        stdstr.refresh()
+        time.sleep(1)
+
+if __name__ == '__main__':
+    curses.wrapper(main)
