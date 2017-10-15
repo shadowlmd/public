@@ -21,7 +21,7 @@ def main(stdscr):
     while True:
         stdscr.clear()
         #sys.stderr.write("\x1b[2J\x1b[H")
-        stdscr.addstr('   LVE ID             IN            OUT')
+        stdscr.addstr('   LVE ID             IN            OUT\n')
         for lve_id in os.listdir('/proc/lve/per-lve/'):
             fname = os.path.join('/proc/lve/per-lve', lve_id, 'net_stat')
             if lve_id.isdigit() and int(lve_id) >= min_lve and os.path.isfile(fname):
@@ -42,7 +42,7 @@ def main(stdscr):
         lines = 0
         for lve_id in sorted(newstats, key = lambda item: newstats[item][sort_by], reverse = True):
             lines += 1
-            stdscr.addstr('%9s' % (lve_id) + '%15s' % (size_fmt(newstats[lve_id]['in'])) + '%15s' % (size_fmt(newstats[lve_id]['out'])));
+            stdscr.addstr('%9s' % (lve_id) + '%15s' % (size_fmt(newstats[lve_id]['in'])) + '%15s' % (size_fmt(newstats[lve_id]['out'])) + '\n');
             if lines == 10:
                 break
         stdscr.refresh()
