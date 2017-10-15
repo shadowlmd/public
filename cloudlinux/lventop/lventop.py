@@ -45,7 +45,7 @@ def main(stdscr):
             stdscr.addstr('%9s' % (lve_id) + '%15s' % (size_fmt(newstats[lve_id]['in'])) + '%15s' % (size_fmt(newstats[lve_id]['out'])));
             if lines == 10:
                 break
-        stdstr.refresh()
+        stdscr.refresh()
         time.sleep(1)
 
 if __name__ == '__main__':
