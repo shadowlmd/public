@@ -1,14 +1,23 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
-import os, time
+import sys, os, time
 
 min_lve = 500
 sort_type = 'o'
 oldstats = {}
 newstats = {}
 
+def size_fmt(num):
+    for unit in ['B','KiB','MiB']:
+        if abs(num) < 1024.0:
+            return "%.2f %s" % (num, unit)
+        num /= 1024.0
+    return "%.2f %s" % (num, 'GiB')
+
 while True:
+    sys.stderr.write("\x1b[2J\x1b[H")
+    print('LVE ID\tIN\tOUT')
     for lve_id in os.listdir('/proc/lve/per-lve/'):
         fname = os.path.join('/proc/lve/per-lve', lve_id, 'net_stat')
         if lve_id.isdigit() and int(lve_id) >= min_lve and os.path.isfile(fname):
@@ -27,5 +36,5 @@ while True:
         if not lve_id in newstats:
             del oldstats[lve_id]
     for lve_id in newstats:
-        print(lve_id, ' ', newstats[lve_id]['in'], ' ', newstats[lve_id]['out']);
+        print(lve_id + '\t' + size_fmt(newstats[lve_id]['in']) + '\t' + size_fmt(newstats[lve_id]['out']));
     time.sleep(1)
