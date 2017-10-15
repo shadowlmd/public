@@ -20,11 +20,11 @@ def main(stdscr):
 
     while True:
         c = stdscr.getch()
-        if c == 105:
+        if c == ord('i'):
             sort_by = 'in'
-        elif c == 111:
+        elif c == ord('o'):
             sort_by = 'out'
-        elif c == 113:
+        elif c == ord('q'):
             break
         stdscr.clear()
         stdscr.addstr('   LVE ID             IN            OUT\n')
