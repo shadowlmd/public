@@ -18,6 +18,13 @@ def main(stdscr):
     bandwidth = {}
 
     while True:
+        c = stdscr.getch()
+        if c == 105:
+            sort_by = 'in'
+        elif c == 111:
+            sort_by = 'out'
+        elif c == 113:
+            break
         stdscr.clear()
         stdscr.addstr('   LVE ID             IN            OUT\n')
         for lve_id in os.listdir('/proc/lve/per-lve/'):
@@ -45,15 +52,7 @@ def main(stdscr):
                 break
         stdscr.move(0, 0)
         stdscr.refresh()
-        c = stdscr.getch()
-        if c == -1:
-            time.sleep(1)
-        if c == 105:
-            sort_by = 'in'
-        elif c == 111:
-            sort_by = 'out'
-        elif c == 113:
-            break
+        time.sleep(1)
 
 if __name__ == '__main__':
     curses.wrapper(main)
