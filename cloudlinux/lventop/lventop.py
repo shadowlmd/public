@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from __future__ import print_function
 import sys, os, time, curses
 
 def size_fmt(num):
@@ -15,12 +14,11 @@ def main(stdscr):
 
     min_lve = 500
     sort_by = 'out'
-    oldstats = {}
-    newstats = {}
+    oldvals = {}
+    bandwidth = {}
 
     while True:
         stdscr.clear()
-        #sys.stderr.write("\x1b[2J\x1b[H")
         stdscr.addstr('   LVE ID             IN            OUT\n')
         for lve_id in os.listdir('/proc/lve/per-lve/'):
             fname = os.path.join('/proc/lve/per-lve', lve_id, 'net_stat')
@@ -32,21 +30,30 @@ def main(stdscr):
                             break
                 traf_in = int(traf_in)
                 traf_out = int(traf_out)
-                if not lve_id in oldstats:
-                    oldstats[lve_id] = { 'in': 0, 'out': 0 }
-                newstats[lve_id] = { 'in': traf_in - oldstats[lve_id]['in'], 'out': traf_out - oldstats[lve_id]['out'] }
-                oldstats[lve_id] = { 'in': traf_in, 'out': traf_out }
-        for lve_id in oldstats:
-            if not lve_id in newstats:
-                del oldstats[lve_id]
+                if not lve_id in oldvals:
+                    oldvals[lve_id] = { 'in': 0, 'out': 0 }
+                bandwidth[lve_id] = { 'in': traf_in - oldvals[lve_id]['in'], 'out': traf_out - oldvals[lve_id]['out'] }
+                oldvals[lve_id] = { 'in': traf_in, 'out': traf_out }
+        for lve_id in oldvals:
+            if not lve_id in bandwidth:
+                del oldvals[lve_id]
         lines = 0
-        for lve_id in sorted(newstats, key = lambda item: newstats[item][sort_by], reverse = True):
+        for lve_id in sorted(bandwidth, key = lambda item: bandwidth[item][sort_by], reverse = True):
             lines += 1
-            stdscr.addstr('%9s' % (lve_id) + '%15s' % (size_fmt(newstats[lve_id]['in'])) + '%15s' % (size_fmt(newstats[lve_id]['out'])) + '\n');
+            stdscr.addstr('%9s' % (lve_id) + '%15s' % (size_fmt(bandwidth[lve_id]['in'])) + '%15s' % (size_fmt(bandwidth[lve_id]['out'])) + '\n');
             if lines == 10:
                 break
+        stdscr.move(0, 0)
         stdscr.refresh()
-        time.sleep(1)
+        c = stdscr.getch()
+        if c == -1:
+            time.sleep(1)
+        if c == 105:
+            sort_by = 'in'
+        elif c == 111:
+            sort_by = 'out'
+        elif c == 113:
+            break
 
 if __name__ == '__main__':
     curses.wrapper(main)
