@@ -10,6 +10,7 @@ def size_fmt(num):
     return "%.2f %s/s" % (num, 'GiB')
 
 def main(stdscr):
+    curses.use_default_colors()
     stdscr.nodelay(1)
 
     min_lve = 500
