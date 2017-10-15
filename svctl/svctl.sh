@@ -1,7 +1,11 @@
 #!/bin/bash
 
+notice() {
+  echo "$@" 1>&2
+}
+
 usage() {
-  echo "Usage: ${0##*/} start|stop|status name"
+  notice "Usage: ${0##*/} start|stop|status name"
   exit 1
 }
 
@@ -13,7 +17,7 @@ running() {
         return 0
       fi
     else
-      echo "File '$PIDFILE' is corrupt."
+      notice "File '$PIDFILE' is corrupt."
     fi
   fi
   return 1
@@ -21,17 +25,17 @@ running() {
 
 svcstart() {
   if running $1; then
-    echo "Service $1 is already running!"
+    notice "Service $1 is already running!"
     exit 2
   fi
-  echo -n "Starting ${1}..."
+  notice -n "Starting ${1}..."
   setsid $1 1>/dev/null 2>&1 &
   echo $! 1>"$PIDFILE"
   sleep 0.1
   if running $1 1>/dev/null; then
-    echo "OK"
+    notice "OK"
   else
-    echo "FAIL"
+    notice "FAIL"
     rm -f "$PIDFILE"
     exit 3
   fi
@@ -39,7 +43,7 @@ svcstart() {
 
 svcstop() {
   if running $1; then
-    echo -n "Stopping $1 gracefully..."
+    notice -n "Stopping $1 gracefully..."
     pkill -s $(<"$PIDFILE")
     I=0
     while running $1 1>/dev/null && [[ $I -le 5 ]]; do
@@ -47,8 +51,8 @@ svcstop() {
       let I++
     done
     if running $1 1>/dev/null; then
-      echo 'FAIL'
-      echo -n "Killing ${1}..."
+      notice 'FAIL'
+      notice -n "Killing ${1}..."
       pkill -9 -s $(<"$PIDFILE")
       I=0
       while running $1 1>/dev/null && [[ $I -le 5 ]]; do
@@ -56,14 +60,14 @@ svcstop() {
         let I++
       done
       if running $1 1>/dev/null; then
-        echo 'FAIL'
+        notice 'FAIL'
         exit 3
       fi
     fi
-    echo 'OK'
+    notice 'OK'
     rm -f "$PIDFILE"
   else
-    echo "Service $1 is not running!"
+    notice "Service $1 is not running!"
     exit 2
   fi
 }
@@ -83,7 +87,7 @@ fi
 if [[ -z "$LOGNAME" ]]; then
   LOGNAME=$(id -un)
   if [[ -z "$LOGNAME" ]]; then
-    echo "LOGNAME variable is not set, can't work without it."
+    notice "LOGNAME variable is not set, can't work without it."
     exit 1
   fi
 fi
