@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
+from operator import itemgetter
 import sys, os, time
 
 min_lve = 500
-sort_type = 'o'
+sort_by = 2
 oldstats = {}
 newstats = {}
 
@@ -35,6 +36,10 @@ while True:
     for lve_id in oldstats:
         if not lve_id in newstats:
             del oldstats[lve_id]
-    for lve_id in newstats:
-        print('%9s' % lve_id + '%15s' % size_fmt(newstats[lve_id]['in']) + '%15s' % size_fmt(newstats[lve_id]['out']));
+    lines = 0
+    for lve_id in newstats.sorted(key = itemgetter(sort_by), reverse = True):
+        lines += 1
+        print('%9s' % (lve_id) + '%15s' % (size_fmt(newstats[lve_id]['in'])) + '%15s' % (size_fmt(newstats[lve_id]['out'])));
+        if lines == 10:
+            break
     time.sleep(1)
