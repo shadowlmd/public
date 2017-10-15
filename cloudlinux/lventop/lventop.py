@@ -1,6 +1,6 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
-import os  
-for lveid in os.listdir('/proc/lve/per-lve/'):
-  if os.path.isfile(os.path.join('/proc/lve/per-lve', lveid, 'net_stat')):
-    print(fn)
+import os
+for lve_id in os.listdir('/proc/lve/per-lve/'):
+  if os.path.isfile(os.path.join('/proc/lve/per-lve', lve_id, 'net_stat')):
+    print(lve_id)
