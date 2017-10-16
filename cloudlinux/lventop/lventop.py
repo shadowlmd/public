@@ -2,13 +2,6 @@
 
 import sys, os, time, curses
 
-def size_fmt(num):
-    for unit in ['KiB', 'MiB']:
-        num /= 1024.0
-        if abs(num) < 1024.0:
-            return "%.2f %s/s" % (num, unit)
-    return "%.2f %s/s" % (num, 'GiB')
-
 def main(stdscr):
     curses.use_default_colors()
     stdscr.nodelay(1)
@@ -18,8 +11,21 @@ def main(stdscr):
     sort_sec = 'in'
     oldvals = {}
 
+    def bytes_to_human(num):
+        for unit in ['KiB', 'MiB']:
+            num /= 1024.0
+            if abs(num) < 1024.0:
+                return "%.2f %s/s" % (num, unit)
+        return "%.2f %s/s" % (num, 'GiB')
+
     def sort_func(item):
-        return bandwidth[item][sort_pri], bandwidth[item][sort_sec]
+        return bandwidth[item][sort_pri], bandwidth[item][sort_sec], -1*int(item)
+
+    def numeric_compare(x, y):
+        for index in range(0, len(x)):
+            cmp_r = x[index] - y[index]
+            if cmp_r != 0:
+                return cmp_r
 
     while True:
         c = stdscr.getch()
@@ -52,9 +58,9 @@ def main(stdscr):
             if not lve_id in bandwidth:
                 del oldvals[lve_id]
         lines = 0
-        for lve_id in sorted(sorted(bandwidth), key = sort_func, reverse = True):
+        for lve_id in sorted(bandwidth, key = sort_func, cmp = numeric_compare, reverse = True):
             lines += 1
-            stdscr.addstr('\n%9s' % (lve_id) + '%15s' % (size_fmt(bandwidth[lve_id]['in'])) + '%15s' % (size_fmt(bandwidth[lve_id]['out'])));
+            stdscr.addstr('\n%9s' % (lve_id) + '%15s' % (bytes_to_human(bandwidth[lve_id]['in'])) + '%15s' % (bytes_to_human(bandwidth[lve_id]['out'])));
             if lines == stdscr.getmaxyx()[0]-1:
                 break
         stdscr.move(0, 0)
