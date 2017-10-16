@@ -28,15 +28,18 @@ def main(stdscr):
                 return cmp_r
 
     while True:
-        c = stdscr.getch()
-        if c == ord('i'):
-            sort_pri = 'in'
-            sort_sec = 'out'
-        elif c == ord('o'):
-            sort_pri = 'out'
-            sort_sec = 'in'
-        elif c == ord('q'):
-            break
+        while True:
+            c = stdscr.getch()
+            if c == -1:
+                break
+            elif c == ord('i'):
+                sort_pri = 'in'
+                sort_sec = 'out'
+            elif c == ord('o'):
+                sort_pri = 'out'
+                sort_sec = 'in'
+            elif c == ord('q'):
+                return
         bandwidth = {}
         stdscr.clear()
         stdscr.addstr('   LVE ID             IN            OUT', curses.A_REVERSE)
