@@ -55,7 +55,7 @@ def main(stdscr):
         for lve_id in sorted(bandwidth, key = sort_func, reverse = True):
             lines += 1
             stdscr.addstr('%9s' % (lve_id) + '%15s' % (size_fmt(bandwidth[lve_id]['in'])) + '%15s' % (size_fmt(bandwidth[lve_id]['out'])) + '\n');
-            if lines == 10:
+            if lines == stdscr.getmaxyx()[0]-2:
                 break
         stdscr.move(0, 0)
         stdscr.refresh()
