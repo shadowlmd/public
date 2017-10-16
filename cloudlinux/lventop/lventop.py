@@ -33,7 +33,7 @@ def main(stdscr):
             break
         bandwidth = {}
         stdscr.clear()
-        stdscr.addstr('   LVE ID             IN            OUT\n')
+        stdscr.addstr('   LVE ID             IN            OUT', curses.A_REVERSE)
         for lve_id in os.listdir('/proc/lve/per-lve/'):
             fname = os.path.join('/proc/lve/per-lve', lve_id, 'net_stat')
             if lve_id.isdigit() and int(lve_id) >= min_lve and os.path.isfile(fname):
@@ -54,8 +54,8 @@ def main(stdscr):
         lines = 0
         for lve_id in sorted(bandwidth, key = sort_func, reverse = True):
             lines += 1
-            stdscr.addstr('%9s' % (lve_id) + '%15s' % (size_fmt(bandwidth[lve_id]['in'])) + '%15s' % (size_fmt(bandwidth[lve_id]['out'])) + '\n');
-            if lines == stdscr.getmaxyx()[0]-2:
+            stdscr.addstr('\n%9s' % (lve_id) + '%15s' % (size_fmt(bandwidth[lve_id]['in'])) + '%15s' % (size_fmt(bandwidth[lve_id]['out'])));
+            if lines == stdscr.getmaxyx()[0]-1:
                 break
         stdscr.move(0, 0)
         stdscr.refresh()
