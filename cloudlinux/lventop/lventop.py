@@ -52,7 +52,7 @@ def main(stdscr):
             if not lve_id in bandwidth:
                 del oldvals[lve_id]
         lines = 0
-        for lve_id in sorted(bandwidth, key = sort_func, reverse = True):
+        for lve_id in sorted(sorted(bandwidth), key = sort_func, reverse = True):
             lines += 1
             stdscr.addstr('\n%9s' % (lve_id) + '%15s' % (size_fmt(bandwidth[lve_id]['in'])) + '%15s' % (size_fmt(bandwidth[lve_id]['out'])));
             if lines == stdscr.getmaxyx()[0]-1:
