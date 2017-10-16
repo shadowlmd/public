@@ -14,18 +14,24 @@ def main(stdscr):
     stdscr.nodelay(1)
 
     min_lve = 500
-    sort_by = 'out'
+    sort_pri = 'out'
+    sort_sec = 'in'
     oldvals = {}
-    bandwidth = {}
+
+    def sort_func(item):
+        return bandwidth[item][sort_pri], bandwidth[item][sort_sec]
 
     while True:
         c = stdscr.getch()
         if c == ord('i'):
-            sort_by = 'in'
+            sort_pri = 'in'
+            sort_sec = 'out'
         elif c == ord('o'):
-            sort_by = 'out'
+            sort_pri = 'out'
+            sort_sec = 'in'
         elif c == ord('q'):
             break
+        bandwidth = {}
         stdscr.clear()
         stdscr.addstr('   LVE ID             IN            OUT\n')
         for lve_id in os.listdir('/proc/lve/per-lve/'):
@@ -46,7 +52,7 @@ def main(stdscr):
             if not lve_id in bandwidth:
                 del oldvals[lve_id]
         lines = 0
-        for lve_id in sorted(bandwidth, key = lambda item: bandwidth[item][sort_by], reverse = True):
+        for lve_id in sorted(bandwidth, key = sort_func, reverse = True):
             lines += 1
             stdscr.addstr('%9s' % (lve_id) + '%15s' % (size_fmt(bandwidth[lve_id]['in'])) + '%15s' % (size_fmt(bandwidth[lve_id]['out'])) + '\n');
             if lines == 10:
