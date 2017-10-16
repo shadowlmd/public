@@ -50,11 +50,10 @@ def main(stdscr):
             lve_id = int(lve_id)
             if lve_id < min_lve or not os.path.isfile(fname):
                 continue
-            with open(fname, 'r') as in_file:
-                for line in in_file:
-                    dummy, lim_out, lim_in, traf_out, traf_in = line.split()
-                    if dummy == 'traf:':
-                        break
+            for line in open(fname, 'r'):
+                dummy, lim_out, lim_in, traf_out, traf_in = line.split()
+                if dummy == 'traf:':
+                    break
             traf_in = int(traf_in)
             traf_out = int(traf_out)
             if not lve_id in oldvals:
