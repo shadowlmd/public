@@ -67,6 +67,8 @@ def main(stdscr):
                 oldvals[lve_id] = { 'in': 0, 'out': 0 }
         lines = 0
         for lve_id in sorted(bandwidth, key = sort_func, cmp = compare_func, reverse = True):
+            if bandwidth[lve_id]['in'] == 0 and bandwidth[lve_id]['out'] == 0:
+                continue
             lines += 1
             stdscr.addstr('\n%9s' % (lve_id) + '%15s' % (bytes_to_human(bandwidth[lve_id]['in'])) + '%15s' % (bytes_to_human(bandwidth[lve_id]['out'])));
             if lines == stdscr.getmaxyx()[0]-1:
