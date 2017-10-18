@@ -62,7 +62,7 @@ def main(stdscr):
             oldvals[lve_id] = { 'in': traf_in, 'out': traf_out }
         for lve_id in oldvals:
             if not lve_id in bandwidth:
-                del oldvals[lve_id]
+                oldvals[lve_id] = { 'in': 0, 'out': 0 }
         lines = 0
         for lve_id in sorted(bandwidth, key = sort_func, cmp = compare_func, reverse = True):
             lines += 1
