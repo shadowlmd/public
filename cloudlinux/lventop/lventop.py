@@ -56,6 +56,8 @@ def main(stdscr):
                     break
             traf_in = int(traf_in)
             traf_out = int(traf_out)
+            if traf_in == 0 and traf_out == 0:
+                continue
             if not lve_id in oldvals:
                 oldvals[lve_id] = { 'in': 0, 'out': 0 }
             bandwidth[lve_id] = { 'in': traf_in - oldvals[lve_id]['in'], 'out': traf_out - oldvals[lve_id]['out'] }
