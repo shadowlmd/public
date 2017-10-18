@@ -21,12 +21,6 @@ def main(stdscr):
     def sort_func(item):
         return bandwidth[item][sort_pri], bandwidth[item][sort_sec], item * -1
 
-    def compare_func(x, y):
-        for index in range(0, len(x)):
-            cmp_r = x[index] - y[index]
-            if cmp_r != 0:
-                return cmp_r
-
     while True:
         while True:
             c = stdscr.getch()
@@ -66,7 +60,7 @@ def main(stdscr):
             if not lve_id in bandwidth:
                 oldvals[lve_id] = { 'in': 0, 'out': 0 }
         lines = 0
-        for lve_id in sorted(bandwidth, key = sort_func, cmp = compare_func, reverse = True):
+        for lve_id in sorted(bandwidth, key = sort_func, reverse = True):
             if bandwidth[lve_id]['in'] == 0 and bandwidth[lve_id]['out'] == 0:
                 continue
             lines += 1
