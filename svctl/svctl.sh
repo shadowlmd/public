@@ -5,11 +5,13 @@ notice() {
 }
 
 usage() {
-  notice "Usage: ${0##*/} start|stop|status name"
+  notice "Usage: "
+  notice "  ${0##*/} list"
+  notice "  ${0##*/} start|stop|status name"
   exit 1
 }
 
-running() {
+svc_running() {
   if [[ -e "$PIDFILE" ]]; then
     PID=$(<"$PIDFILE")
     if [[ $PID =~ ^[0-9]+$ ]]; then
@@ -24,7 +26,7 @@ running() {
 }
 
 svcstart() {
-  if running $1; then
+  if svc_running; then
     notice "Service $1 is already running!"
     exit 2
   fi
@@ -32,7 +34,7 @@ svcstart() {
   setsid $1 1>/dev/null 2>&1 &
   echo $! 1>"$PIDFILE"
   sleep 0.1
-  if running $1 1>/dev/null; then
+  if svc_running 1>/dev/null; then
     notice "OK"
   else
     notice "FAIL"
@@ -42,24 +44,24 @@ svcstart() {
 }
 
 svcstop() {
-  if running $1; then
+  if svc_running; then
     notice -n "Stopping $1 gracefully..."
     pkill -s $(<"$PIDFILE")
     I=0
-    while running $1 1>/dev/null && [[ $I -le 5 ]]; do
+    while svc_running 1>/dev/null && [[ $I -le 5 ]]; do
       sleep 1
       let I++
     done
-    if running $1 1>/dev/null; then
+    if svc_running 1>/dev/null; then
       notice 'FAIL'
       notice -n "Killing ${1}..."
       pkill -9 -s $(<"$PIDFILE")
       I=0
-      while running $1 1>/dev/null && [[ $I -le 5 ]]; do
+      while svc_running 1>/dev/null && [[ $I -le 5 ]]; do
         sleep 1
         let I++
       done
-      if running $1 1>/dev/null; then
+      if svc_running 1>/dev/null; then
         notice 'FAIL'
         exit 3
       fi
@@ -73,16 +75,19 @@ svcstop() {
 }
 
 svcstatus() {
-  if running $1; then
+  if svc_running; then
     pstree -aclnp $(<"$PIDFILE")
   else
-    exit 1
+    return 1
   fi
 }
 
-if [[ $# -lt 2 ]]; then
-  usage
-fi
+svclist() {
+  for PIDFILE in /tmp/${LOGNAME}.*.pid; do
+    [[ -r $PIDFILE ]] || continue
+    svcstatus
+  done
+}
 
 if [[ -z "$LOGNAME" ]]; then
   LOGNAME=$(id -un)
@@ -92,8 +97,12 @@ if [[ -z "$LOGNAME" ]]; then
   fi
 fi
 
-PIDFILE=${2##*/}
-PIDFILE="/tmp/${LOGNAME}.${PIDFILE//[.-]/}.pid"
+if [[ -n "$2" ]]; then
+  PIDFILE=${2##*/}
+  PIDFILE="/tmp/${LOGNAME}.${PIDFILE//[.-]/}.pid"
+elif [[ "$1" != "list" ]]; then
+  usage
+fi
 
 case $1 in
   start)
@@ -108,6 +117,9 @@ case $1 in
   ;;
   status)
     svcstatus $2
+  ;;
+  list)
+    svclist
   ;;
   *)
     usage
