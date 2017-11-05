@@ -65,6 +65,7 @@ def main(stdscr):
             if not lve_id in bandwidth:
                 oldvals[lve_id] = { 'in': 0, 'out': 0 }
         if filled:
+            interval = newinterval
             lines = 0
             for lve_id in sorted(bandwidth, key = sort_func, reverse = True):
                 if bandwidth[lve_id]['in'] == 0 and bandwidth[lve_id]['out'] == 0:
@@ -75,6 +76,8 @@ def main(stdscr):
                     break
         else:
             filled = True
+            newinterval = interval
+            interval = 0.1
         stdscr.move(0, 0)
         stdscr.refresh()
         time.sleep(interval)
