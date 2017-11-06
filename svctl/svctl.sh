@@ -33,6 +33,7 @@ svcstart() {
     notice -n "Starting ${1}..."
     setsid $1 1>/dev/null 2>&1 &
     echo $! 1>"$PIDFILE"
+    chmod 600 "$PIDFILE"
     sleep 0.1
     if svc_running 1>/dev/null; then
         notice "OK"
