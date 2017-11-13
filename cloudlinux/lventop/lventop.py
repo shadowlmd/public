@@ -7,7 +7,7 @@ def main(stdscr):
     stdscr.nodelay(1)
 
     min_lve = 500
-    interval = 5
+    interval = 3
     sort_pri = 'out'
     sort_sec = 'in'
     oldvals = {}
