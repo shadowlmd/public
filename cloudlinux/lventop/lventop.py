@@ -23,6 +23,14 @@ def main(stdscr):
     def sort_func(item):
         return bandwidth[item][sort_pri], bandwidth[item][sort_sec], item * -1
 
+    for line in open('/etc/login.defs', 'r'):
+        entry = line.split()
+        if not entry:
+            continue
+        if entry[0] == 'UID_MIN':
+            min_lve = int(entry[1])
+            break
+
     while True:
         while True:
             c = stdscr.getch()
