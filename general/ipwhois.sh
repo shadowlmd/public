@@ -13,7 +13,7 @@ if [[ -z "$1" ]]; then
   exit 1
 fi
 
-URL="https://ipwhois.cf/?query=$1"
+URL="https://ipwhois.bsrealm.net/?query=$1"
 [[ "${2,,}" == "as" ]] && URL="${URL}&as=on"
 
 w3m -dump "$URL" | tail -n +2 | head -n -1 | awk 'BEGIN { P = 0 }; { if (P == 0) { if (NF != 0) { P = 1 } }; if (P != 0) { print } }' | tac | awk 'BEGIN { P = 0 }; { if (P == 0) { if (NF != 0) { P = 1 } }; if (P != 0) { print } }' | tac
