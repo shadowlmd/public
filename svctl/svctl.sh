@@ -30,6 +30,10 @@ svcstart() {
         notice "Service $1 is already running!"
         exit 2
     fi
+    if ! which $1 &>/dev/null; then
+        notice "Executable not found: $1"
+        exit 3
+    fi
     notice -n "Starting ${1}..."
     setsid $1 1>/dev/null 2>&1 &
     echo $! 1>"$PIDFILE"
