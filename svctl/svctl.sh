@@ -88,7 +88,7 @@ svcstatus() {
 }
 
 svclist() {
-    for PIDFILE in /tmp/${LOGNAME}.*.pid; do
+    for PIDFILE in /run/lock/${LOGNAME}.*.pid; do
         [[ -r $PIDFILE ]] || continue
         svcstatus
     done
@@ -104,7 +104,7 @@ fi
 
 if [[ -n "$2" ]]; then
     PIDFILE=${2##*/}
-    PIDFILE="/tmp/${LOGNAME}.${PIDFILE//[.-]/}.pid"
+    PIDFILE="/run/lock/${LOGNAME}.${PIDFILE//[.-]/}.pid"
 elif [[ "$1" != "list" ]]; then
     usage
 fi
