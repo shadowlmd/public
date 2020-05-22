@@ -1,14 +1,16 @@
 #!/bin/bash
 
 notice() {
-    echo "$@" 1>&2
+    echo -e "$@" 1>&2
+}
+
+die() {
+    notice "$@"
+    exit 1
 }
 
 usage() {
-    notice "Usage: "
-    notice "  ${0##*/} list"
-    notice "  ${0##*/} start|stop|status name"
-    exit 1
+    die "Usage: \n  ${0##*/} list\n  ${0##*/} start|stop|status name"
 }
 
 svc_running() {
@@ -26,26 +28,27 @@ svc_running() {
 }
 
 svcstart() {
-    if svc_running; then
-        notice "Service $1 is already running!"
-        exit 2
-    fi
-    if ! which $1 &>/dev/null; then
-        notice "Executable not found: $1"
-        exit 3
-    fi
-    notice -n "Starting ${1}..."
-    setsid $1 1>/dev/null 2>&1 &
-    echo $! 1>"$PIDFILE"
-    chmod 600 "$PIDFILE"
-    sleep 0.1
-    if svc_running 1>/dev/null; then
-        notice "OK"
-    else
-        notice "FAIL"
-        rm -f "$PIDFILE"
-        exit 3
-    fi
+    (
+        flock -n 9 || die "Cannot acquire lock on ${PIDFILE}.lock"
+        if svc_running; then
+            die "Service $1 is already running!"
+        fi
+        if ! which $1 &>/dev/null; then
+            die "Executable not found: $1"
+        fi
+        notice -n "Starting ${1}..."
+        setsid $1 &>/dev/null &
+        echo $! 1>"$PIDFILE"
+        chmod 600 "$PIDFILE"
+        sleep 0.1
+        if svc_running 1>/dev/null; then
+            notice "OK"
+        else
+            rm -f "$PIDFILE"
+            die "FAIL"
+        fi
+    ) 9>"${PIDFILE}.lock"
+    rm -f "${PIDFILE}.lock"
 }
 
 svcstop() {
@@ -67,15 +70,13 @@ svcstop() {
                 let I++
             done
             if svc_running 1>/dev/null; then
-                notice 'FAIL'
-                exit 3
+                die 'FAIL'
             fi
         fi
         notice 'OK'
         rm -f "$PIDFILE"
     else
-        notice "Service $1 is not running!"
-        exit 2
+        die "Service $1 is not running!"
     fi
 }
 
@@ -97,8 +98,7 @@ svclist() {
 if [[ -z "$LOGNAME" ]]; then
     LOGNAME=$(id -un)
     if [[ -z "$LOGNAME" ]]; then
-        notice "LOGNAME variable is not set, can't work without it."
-        exit 1
+        die "LOGNAME variable is not set, can't work without it."
     fi
 fi
 
