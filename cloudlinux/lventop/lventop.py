@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import sys
 import os
 import time
 import curses
@@ -61,8 +60,7 @@ def main(stdscr):
             continue
         bandwidth = {}
         stdscr.clear()
-        stdscr.addstr('   LVE ID             IN            OUT',
-                      curses.A_REVERSE)
+        stdscr.addstr('   LVE ID             IN            OUT', curses.A_REVERSE)
         for lve_id in os.listdir('/proc/lve/per-lve/'):
             fname = os.path.join('/proc/lve/per-lve', lve_id, 'net_stat')
             if not lve_id.isdigit():
