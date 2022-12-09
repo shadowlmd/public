@@ -4,41 +4,40 @@ import asyncio
 import websockets
 
 
-async def read_from_bbs():
-    async with websockets.connect("wss://bbs.bsrealm.net:8803") as websocket:
-        resp = b""
-        while True:
-            try:
-                r = await asyncio.wait_for(websocket.recv(), 10)
-                resp += bytes(r)
-                if b"EMSI_IRQ8E08" in resp:
-                    break
-            except BaseException:
-                break
-        return resp
-
-
 def die(msg: str, code: int = 0):
     print(msg)
     exit(code)
 
 
-def main():
+async def main():
     try:
-        r = asyncio.run(asyncio.wait_for(read_from_bbs(), 20))
+        websocket = await asyncio.wait_for(websockets.connect("wss://bbs.bsrealm.net:8803"), 5)
     except asyncio.exceptions.TimeoutError:
         die("Check timed out", 1)
     except BaseException as e:
         die(repr(e), 1)
 
-    if b"EMSI_IRQ8E08" in r:
+    resp = b""
+    while b"EMSI_IRQ8E08" not in resp:
+        try:
+            r = await asyncio.wait_for(websocket.recv(), 10)
+            resp += bytes(r)
+        except BaseException:
+            break
+
+    try:
+        await asyncio.wait_for(websocket.close(), 1)
+    except BaseException:
+        pass
+
+    if b"EMSI_IRQ8E08" in resp:
         die("Got valid response", 0)
-    elif len(r.strip()) == 0:
+    elif len(resp.strip()) == 0:
         die("Got empty response", 1)
     else:
-        r = r.decode(encoding="CP866")
-        die(f"Got invalid response:\n\n{r}", 1)
+        resp = resp.decode(encoding="CP866")
+        die(f"Got invalid response:\n\n{resp}", 1)
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
