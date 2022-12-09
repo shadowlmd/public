@@ -26,8 +26,10 @@ def die(msg: str, code: int = 0):
 def main():
     try:
         r = asyncio.run(asyncio.wait_for(read_from_bbs(), 15))
-    except BaseException:
+    except asyncio.exceptions.TimeoutError:
         die("Check timed out", 1)
+    except BaseException as e:
+        die(repr(e), 1)
 
     if b"EMSI_IRQ8E08" in r:
         die("Got valid response", 0)
