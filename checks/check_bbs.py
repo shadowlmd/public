@@ -25,7 +25,7 @@ def die(msg: str, code: int = 0):
 
 def main():
     try:
-        r = asyncio.run(asyncio.wait_for(read_from_bbs(), 15))
+        r = asyncio.run(asyncio.wait_for(read_from_bbs(), 20))
     except asyncio.exceptions.TimeoutError:
         die("Check timed out", 1)
     except BaseException as e:
