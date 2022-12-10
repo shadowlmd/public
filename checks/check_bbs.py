@@ -20,7 +20,7 @@ async def main():
     resp = b""
     while b"EMSI_IRQ8E08" not in resp:
         try:
-            r = await asyncio.wait_for(websocket.recv(), 10)
+            r = await asyncio.wait_for(websocket.recv(), 20)
             resp += bytes(r)
         except BaseException:
             break
