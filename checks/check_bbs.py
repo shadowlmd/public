@@ -25,10 +25,8 @@ async def main():
         except BaseException:
             break
 
-    try:
-        await asyncio.wait_for(websocket.close(), 1)
-    except BaseException:
-        pass
+    websocket.close_timeout = 1
+    await websocket.close()
 
     if b"EMSI_IRQ8E08" in resp:
         die("Got valid response", 0)
