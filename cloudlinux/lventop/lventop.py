@@ -5,9 +5,9 @@ import time
 import curses
 
 
-def main(stdscr):
+def main(stdscr: curses.window):
     curses.use_default_colors()
-    stdscr.nodelay(1)
+    stdscr.nodelay(True)
 
     min_lve = 500
     interval = 3
@@ -62,15 +62,15 @@ def main(stdscr):
         stdscr.clear()
         stdscr.addstr('   LVE ID             IN            OUT', curses.A_REVERSE)
         for lve_id in os.listdir('/proc/lve/per-lve/'):
-            fname = os.path.join('/proc/lve/per-lve', lve_id, 'net_stat')
             if not lve_id.isdigit():
                 continue
+            fname = os.path.join('/proc/lve/per-lve', lve_id, 'net_stat')
             lve_id = int(lve_id)
             if lve_id < min_lve or not os.path.isfile(fname):
                 continue
             for line in open(fname, 'r'):
-                dummy, lim_out, lim_in, traf_out, traf_in = line.split()
-                if dummy == 'traf:':
+                dummy, _, _, traf_out, traf_in = line.split()
+                if dummy.startswith('traf'):
                     break
             traf_in = int(traf_in)
             traf_out = int(traf_out)
@@ -86,16 +86,20 @@ def main(stdscr):
                 }
             oldvals[lve_id] = {'in': traf_in, 'out': traf_out}
         for lve_id in oldvals:
-            if not lve_id in bandwidth:
+            if lve_id not in bandwidth:
                 oldvals[lve_id] = {'in': 0, 'out': 0}
         lines = 0
         for lve_id in sorted(bandwidth, key=sort_func, reverse=True):
             if bandwidth[lve_id]['in'] == 0 and bandwidth[lve_id]['out'] == 0:
                 continue
             lines += 1
-            stdscr.addstr('\n%9s' % (lve_id) + '%15s' % (bytes_to_human(
-                bandwidth[lve_id]['in'])) + '%15s' % (bytes_to_human(bandwidth[lve_id]['out'])))
-            if lines == stdscr.getmaxyx()[0]-1:
+            stdscr.addstr('\n%9s' %
+                          (lve_id) +
+                          '%15s' %
+                          (bytes_to_human(bandwidth[lve_id]['in'])) +
+                          '%15s' %
+                          (bytes_to_human(bandwidth[lve_id]['out'])))
+            if lines == stdscr.getmaxyx()[0] - 1:
                 break
         stdscr.move(0, 0)
         stdscr.refresh()
