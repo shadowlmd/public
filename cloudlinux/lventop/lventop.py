@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
+import curses
 import os
 import time
-import curses
 
 
 def main(stdscr: curses.window):
