@@ -24,6 +24,7 @@
         }
     } else {
     ?>
+
         <form action="" method="post" enctype="multipart/form-data">
             Потолок суммы чисел:
             <input type="number" name="goal"><br>
@@ -31,6 +32,7 @@
             <textarea name="numbers" cols="10" rows="10"></textarea><br>
             <input type="submit" value="Поехали!" name="submit">
         </form>
+
     <?php
     }
     ?>
