@@ -13,6 +13,7 @@
         exec("timeout -k 1 10 " . __DIR__ . "/find_closest_sum_combo.py " . escapeshellcmd($_POST["goal"]) . " " . escapeshellcmd(implode(" ", $numbers)) . " 2>&1", $out, $rc);
         if ($rc == 0 && count($out) > 0) {
             $out = implode("</p>\n<p>", $out);
+            echo "<p>Комбинация чисел с максимально близкой к {$_POST["goal"]} суммой:</p>\n";
             echo "<p>{$out}</p>\n";
         } else {
             echo "<p>Что-то пошло не так. :(</p>\n";
