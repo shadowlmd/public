@@ -6,6 +6,7 @@
 </head>
 
 <body>
+
     <?php
     if (isset($_POST["submit"])) {
         $numbers = preg_split('/\s+/', str_replace(",", ".", $_POST["numbers"]));
@@ -30,10 +31,10 @@
             <textarea name="numbers" cols="10" rows="10"></textarea><br>
             <input type="submit" value="Поехали!" name="submit">
         </form>
-
     <?php
     }
     ?>
+
 </body>
 
 </html>
