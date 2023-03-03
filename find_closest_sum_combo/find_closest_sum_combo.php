@@ -11,15 +11,11 @@
         $numbers = preg_split('/\s+/', $_POST["numbers"]);
         exec("timeout -k 1 60 " . __DIR__ . "/find_closest_sum_combo.py " . escapeshellcmd($_POST["goal"]) . " " . escapeshellcmd(implode(" ", $numbers)), $out, $rc);
         if ($rc == 0) {
-            echo "<p>{$out}</p>" . PHP_EOL;
+            echo "<p>{$out}</p>\n";
         } else {
     ?>
-            <p>
-                Что-то пошло не так. :(
-            </p>
-            <p>
-                Подробности:
-            </p>
+            <p>Что-то пошло не так. :(</p>
+            <p>Подробности:</p>
         <?php
             echo "<pre>\n";
             var_dump($out);
