@@ -27,9 +27,9 @@
 
         <form action="" method="post">
             Потолок суммы чисел:
-            <input type="number" name="goal"><br>
+            <input type="number" name="goal" placeholder="Например: 300"><br>
             Числа:<br>
-            <textarea name="numbers" cols="10" rows="10"></textarea><br>
+            <textarea name="numbers" cols="10" rows="10" placeholder="<?= "Например:\n\n12.3\n46\n73.00\n21,34\n..." ?>"></textarea><br>
             <input type="submit" value="Поехали!" name="submit">
         </form>
 
