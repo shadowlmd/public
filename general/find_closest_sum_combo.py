@@ -20,7 +20,7 @@ def find_closest_sum_combo(numbers, goal):
 
 
 if __name__ == '__main__':
-    if len(argv) < 2:
+    if len(argv) < 3:
         print(f'Usage: {argv[0]} goal number1 number2 ...')
         exit(1)
 
