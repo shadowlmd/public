@@ -29,4 +29,4 @@ if __name__ == '__main__':
 
     res = find_closest_sum_combo(goal=goal, numbers=numbers)
 
-    print(f'sum{res} =', sum(res))
+    print(f'sum{res} =', format(sum(res), '.3g'))
