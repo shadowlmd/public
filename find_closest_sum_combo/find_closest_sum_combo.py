@@ -5,7 +5,8 @@ from sys import argv
 
 
 def find_closest_sum_combo(numbers, goal):
-    """Searches for shortest combination of numbers which sum() is closest to the goal"""
+    """Searches for shortest combination of numbers which sum() is closest
+       to the goal"""
     best_sum = 0
     best_combo = ()
     for r in range(1, len(numbers) + 1):
