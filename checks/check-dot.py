@@ -17,7 +17,7 @@ def main():
     server = trailing_dot(sys.argv[2])
     port = sys.argv[3]
 
-    command = ["dig", "+short", "+tls", "-p", port, 'a', f"@{server}", domain]
+    command = ["dig", "+short", "+tls", "-p", port, 'a', domain, f"@{server}"]
 
     result = subprocess.run(command)
     exit(result.returncode)
