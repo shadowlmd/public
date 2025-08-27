@@ -18,14 +18,12 @@ done
 ((N++))
 
 for K in "${!V[@]}"; do
-	if [[ "${V[$K]}" == "Not affected" ]]; then
+	if [[ ${V[$K]} == "Not affected" ]]; then
 		NOT_AFFECTED="y"
-	elif [[ ! "${V[$K]}" =~ (Vulnerable|unknown) ]]; then
+	elif [[ ! ${V[$K]} =~ (Vulnerable|unknown) ]]; then
 		FULLY_MITIGATED="y"
 	fi
-	if	! [[ "$SKIP_NOT_AFFECTED" == "y" && "$NOT_AFFECTED" == "y" ]] && \
-		! [[ "$SKIP_FULLY_MITIGATED" == "y" && "$FULLY_MITIGATED" == "y" ]]
-	then
+	if ! [[ $SKIP_NOT_AFFECTED == "y" && $NOT_AFFECTED == "y" ]] && ! [[ $SKIP_FULLY_MITIGATED == "y" && $FULLY_MITIGATED == "y" ]]; then
 		printf "%-${N}s: %s\n" "$K" "${V[$K]}"
 		((C++))
 	fi
