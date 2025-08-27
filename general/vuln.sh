@@ -27,7 +27,7 @@ done
 ((N++))
 
 F=0
-for ((I=0; I<$C; I++)); do
+for ((I = 0; I < C; I++)); do
 	unset NOT_AFFECTED
 	unset FULLY_MITIGATED
 	if [[ ${VULN_V[$I]} == "Not affected" ]]; then
