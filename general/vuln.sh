@@ -12,19 +12,17 @@ print_help() {
 		  -s   skip entries considered fully mitigated
 		  -h   show this help and exit
 	EOF
+	exit 0
 }
 
 while getopts ":ash" OPT; do
 	case "$OPT" in
-	a) SKIP_NOT_AFFECTED="n" ;;
-	s) SKIP_FULLY_MITIGATED="y" ;;
-	h)
+	'a') SKIP_NOT_AFFECTED="n" ;;
+	's') SKIP_FULLY_MITIGATED="y" ;;
+	'h') print_help ;;
+	'?')
+		echo "Unknown option: -$OPTARG"
 		print_help
-		exit 0
-		;;
-	\?)
-		echo "Unknown option: -$OPTARG" >&2
-		exit 2
 		;;
 	esac
 done
