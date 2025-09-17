@@ -3,15 +3,35 @@
 SKIP_NOT_AFFECTED="y"
 SKIP_FULLY_MITIGATED="n"
 
+print_help() {
+	cat <<-'EOF'
+		Usage: check-vulns.sh [options]
+
+		Options:
+		  -a   show all entries (don't skip "Not affected")
+		  -s   skip entries considered fully mitigated
+		  -h   show this help and exit
+	EOF
+}
+
+while getopts ":ash" OPT; do
+	case "$OPT" in
+	a) SKIP_NOT_AFFECTED="n" ;;
+	s) SKIP_FULLY_MITIGATED="y" ;;
+	h)
+		print_help
+		exit 0
+		;;
+	\?)
+		echo "Unknown option: -$OPTARG" >&2
+		exit 2
+		;;
+	esac
+done
+
 declare -a VULN_K VULN_V
 
 shopt -s nocasematch
-
-if [[ $1 == "--all" ]]; then
-	SKIP_NOT_AFFECTED="n"
-elif [[ $1 == "--skip-mitigated" ]]; then
-	SKIP_FULLY_MITIGATED="y"
-fi
 
 C=0
 N=0
