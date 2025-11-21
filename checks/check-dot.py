@@ -12,7 +12,7 @@ def trailing_dot(name: str) -> str:
 
 
 def main() -> None:
-    if len(sys.argv) != 4:
+    if len(sys.argv) != 4:  # noqa: PLR2004
         print(f"Usage: python3 {SCRIPTNAME} <DOMAIN> <SERVER> <PORT>")
         sys.exit(1)
 
@@ -22,7 +22,7 @@ def main() -> None:
 
     command = ["dig", "+short", "+tls", "-p", port, "a", domain, f"@{server}"]
 
-    result = subprocess.run(command, check=False)
+    result = subprocess.run(command, check=False)  # noqa: S603
     sys.exit(result.returncode)
 
 
