@@ -1,30 +1,34 @@
 #!/usr/bin/env python3
 
 import asyncio
+import sys
 
-import websockets
+from websockets.client import connect
 
 
-def die(msg: str, code: int = 0):
+def die(msg: str, code: int = 0) -> None:
     print(msg)
-    exit(code)
+    sys.exit(code)
 
 
-async def main():
+async def main() -> None:
     try:
-        websocket = await asyncio.wait_for(websockets.connect("wss://bbs.bsrealm.net:8803"), 5)
+        websocket = await asyncio.wait_for(connect("wss://bbs.bsrealm.net:8803"), 5)
     except asyncio.exceptions.TimeoutError:
         die("Connection timed out", 1)
-    except BaseException as e:
+    except Exception as e:
         die(repr(e), 1)
 
     resp = b""
-    while b"EMSI_IRQ8E08" not in resp:
-        try:
+    try:
+        while b"EMSI_IRQ8E08" not in resp:
             r = await asyncio.wait_for(websocket.recv(), 20)
-            resp += bytes(r)
-        except BaseException:
-            break
+            if isinstance(r, bytes):
+                resp += r
+            elif isinstance(r, str):
+                resp += r.encode(encoding="latin1")
+    except asyncio.exceptions.TimeoutError:
+        pass
 
     websocket.close_timeout = 1
     await websocket.close()
