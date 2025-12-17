@@ -13,7 +13,7 @@ def die(msg: str, code: int = 0) -> None:
 
 async def main() -> None:
     try:
-        websocket = await asyncio.wait_for(connect("wss://bbs.bsrealm.net:8803"), 5)
+        websocket = await asyncio.wait_for(connect("wss://home.bsrealm.net:8803"), 5)
     except asyncio.exceptions.TimeoutError:
         die("Connection timed out", 1)
     except Exception as e:
