@@ -9,11 +9,6 @@ from mutagen.flac import FLAC
 from pathvalidate import sanitize_filename
 
 
-def cue_time_to_seconds(t: str) -> float:
-    m, s, f = map(int, t.split(":"))
-    return m * 60 + s + f / 75.0
-
-
 def extract_metadata(flac: FLAC) -> dict:
     meta = {}
 
@@ -28,31 +23,34 @@ def extract_metadata(flac: FLAC) -> dict:
 
 
 def track_metadata(base_meta: dict, track_num: int, title: str) -> dict:
-    meta = dict(base_meta)
+    meta = base_meta.copy()
     meta["tracknumber"] = str(track_num)
     meta["title"] = title
     return meta
 
 
-def main(path: Path) -> None:
-    flac = FLAC(str(path))
+def cue_time_to_seconds(t: str) -> float:
+    m, s, f = map(int, t.split(":"))
+    return m * 60 + s + f / 75.0
 
-    artist = flac.get("albumartist", flac.get("artist", ["Unknown"]))[0]
-    album = flac.get("album", ["Unknown Album"])[0]
-    date = flac.get("date", ["0000"])[0][:4]
 
-    cue_text = flac.get("cuesheet", [None])[0]
+def parse_cue(cue_text: str | None) -> CueSheet:
     if not cue_text:
-        raise RuntimeError("No embedded CUESHEET found in FLAC metadata")
+        msg = "No embedded CUESHEET found in FLAC metadata"
+        raise RuntimeError(msg)
 
     cue = CueSheet()
     cue.setOutputFormat("%performer% - %title%", "%performer% - %title% %index%")
     cue.setData(cue_text)
     cue.parse()
 
+    return cue
+
+
+def parse_cue_tracks(cue_tracks: list) -> list[dict]:
     tracks = []
 
-    for t in cue.tracks:
+    for t in cue_tracks:
         offset = getattr(t, "offset", None)
         if offset is None:
             continue
@@ -66,12 +64,26 @@ def main(path: Path) -> None:
         )
 
     if not tracks:
-        raise RuntimeError("cueparser produced no usable tracks")
+        msg = "cueparser produced no usable tracks"
+        raise RuntimeError(msg)
+
+    return tracks
+
+
+def main(path: Path) -> None:
+    flac = FLAC(str(path))
+
+    artist = flac.get("albumartist", flac.get("artist", ["Unknown"]))[0]
+    album = flac.get("album", ["Unknown Album"])[0]
+    date = flac.get("date", ["0000"])[0][:4]
+
+    cue = parse_cue(flac.get("cuesheet", [None])[0])
+    tracks = parse_cue_tracks(cue.tracks)
+
+    base_meta = extract_metadata(flac)
 
     container = av.open(str(path))
     audio_stream = next(s for s in container.streams if s.type == "audio")
-
-    base_meta = extract_metadata(flac)
 
     outdir = Path(sanitize_filename(artist)) / f"{date} - {sanitize_filename(album)}"
     outdir.mkdir(parents=True, exist_ok=True)
@@ -89,7 +101,7 @@ def main(path: Path) -> None:
 
         output = av.open(str(outfile), "w")
         out_stream = output.add_stream("libvorbis", rate=audio_stream.rate)
-        out_stream.options = {"qscale": "6"}
+        out_stream.options["global_quality"] = "6"
 
         metadata = track_metadata(base_meta, track["number"], track["title"])
         out_stream.metadata.update(metadata)
