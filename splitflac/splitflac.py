@@ -101,7 +101,7 @@ def main(path: Path) -> None:
 
         output = av.open(str(outfile), "w")
         out_stream = output.add_stream("libvorbis", rate=audio_stream.rate)
-        out_stream.options["global_quality"] = "6"
+        out_stream.codec_context.options["q"] = "6"
 
         metadata = track_metadata(base_meta, track["number"], track["title"])
         out_stream.metadata.update(metadata)
