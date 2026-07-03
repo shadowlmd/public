@@ -100,7 +100,7 @@ def main(path: Path) -> None:
         container.seek(int(start / audio_stream.time_base), stream=audio_stream)
 
         output = av.open(str(outfile), "w")
-        out_stream = output.add_stream("libvorbis", rate=audio_stream.rate, global_quality=6)
+        out_stream = output.add_stream("vorbis", rate=audio_stream.rate, global_quality=6, options={'strict': '-2'})
 
         metadata = track_metadata(base_meta, track["number"], track["title"])
         out_stream.metadata.update(metadata)
