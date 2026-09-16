@@ -21,7 +21,7 @@ async def main() -> None:
 
     resp = b""
     try:
-        while b"EMSI_IRQ8E08" not in resp:
+        while b"\x1b[0;37;40m" not in resp:
             r = await asyncio.wait_for(websocket.recv(), 20)
             if isinstance(r, bytes):
                 resp += r
