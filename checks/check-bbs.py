@@ -19,9 +19,12 @@ async def main() -> None:
     except Exception as e:
         die(repr(e), 1)
 
+    await asyncio.sleep(1)
+    await websocket.send(b"\x1b" * 5)
+
     resp = b""
     try:
-        while b"\x1b[0;37;40m" not in resp:
+        while b"EMSI_IRQ8E08" not in resp:
             r = await asyncio.wait_for(websocket.recv(), 20)
             if isinstance(r, bytes):
                 resp += r
