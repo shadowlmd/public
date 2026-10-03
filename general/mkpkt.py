@@ -39,7 +39,13 @@ def main() -> None:
         default=datetime.datetime.now().astimezone().replace(microsecond=0),
         help="YYYY-MM-DD HH:MM:SS, default: now",
     )
-    ap.add_argument("--attr", type=lambda s: int(s, 0), default=None, help="message attribute, default: 0 for echomail, 1 (private) for netmail")
+    ap.add_argument(
+        "--attr",
+        type=lambda s: int(s, 0),
+        default=None,
+        help="message attribute: a bit mask (FTS-0001), e.g. 0x83 = private (1) + crash (2) + kill/sent (0x80); "
+        "decimal, 0x hex or 0b binary; default: 0 for echomail, 1 (private) for netmail",
+    )
     ap.add_argument("-o", "--output", help="output packet, default: XXXXXXXX.pkt from the time")
     a = ap.parse_args()
 
