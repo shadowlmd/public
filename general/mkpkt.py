@@ -23,7 +23,7 @@ def address(s: str) -> tuple[int, ...]:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("text", help="message text file (LF or CRLF line ends)")
+    ap.add_argument("text_file", help="message text file (LF or CRLF line ends)")
     ap.add_argument("-f", "--from", dest="orig", type=address, required=True, help="origin address zone:net/node[.point]")
     ap.add_argument("-t", "--to", dest="dest", type=address, required=True, help="destination address zone:net/node[.point]")
     ap.add_argument("-a", "--area", help="echo area tag; netmail if not given")
@@ -79,7 +79,7 @@ def main() -> None:
         b"",
     )
 
-    lines = Path(a.text).read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r").split(b"\r")
+    lines = Path(a.text_file).read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r").split(b"\r")
     if lines[-1] == b"":
         lines.pop()
 
